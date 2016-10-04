@@ -7,6 +7,7 @@ import com.example.coolweather.model.City;
 import com.example.coolweather.model.County;
 import com.example.coolweather.model.Province;
 
+import android.R;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -127,7 +128,7 @@ public class CoolWeatherDB {
 	/*
 	 * 从数据库读取某城市下所有的县信息.
 	 */
-	public List<County> loadCounties(int cityId) {
+	public List<County> loadCounties(String cityId) {
 		List<County> list = new ArrayList<County>();
 		Cursor cursor = db.query("County", null, "city_id = ? ", 
 				new String[] {String.valueOf(cityId)}, null, null, null);

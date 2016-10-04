@@ -31,7 +31,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 			+ "id integer primary key autoincrement, "
 			+ "county_name text, "
 			+ "county_code text, "
-			+ "city_id integer)";
+			+ "city_id text)";
 			
 	public CoolWeatherOpenHelper(Context context, String name,
 			CursorFactory factory, int version) {

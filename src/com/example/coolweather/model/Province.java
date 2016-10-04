@@ -1,5 +1,6 @@
 package com.example.coolweather.model;
 
+
 public class Province {
 	
 	private int id;
