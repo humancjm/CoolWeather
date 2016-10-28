@@ -7,7 +7,6 @@ import com.example.coolweather.model.City;
 import com.example.coolweather.model.County;
 import com.example.coolweather.model.Province;
 
-import android.R;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

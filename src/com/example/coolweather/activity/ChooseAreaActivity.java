@@ -64,20 +64,23 @@ public class ChooseAreaActivity extends Activity {
 	private City selectedCity;
 	
 	//当前省的名称
-	private String mCurrentProviceName;
+	//private String mCurrentProviceName;
 	
 	//判断是否从  WeatherActivity中跳转过来
 	private boolean isFromWeatherActivity;
+	
+	//存储城市名称
+	public String city_master;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
-		//isFromWeatherActivity = getIntent().getBooleanExtra("", defaultValue)
+		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		if (prefs.getBoolean("city_selected", false)) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this); 
+		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
 			Intent intent = new Intent(this, WeatherActivity.class);
 			startActivity(intent);
 			finish();
@@ -86,6 +89,7 @@ public class ChooseAreaActivity extends Activity {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 	    setContentView(R.layout.choose_area);
+	    
 	    listView = (ListView) findViewById(R.id.list_view);
 	    titleText = (TextView) findViewById(R.id.title_text);
 	    adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
@@ -102,11 +106,13 @@ public class ChooseAreaActivity extends Activity {
 					queryCities();
 				} else if (currentLevel == LEVEL_CITY) {
 					selectedCity = cityList.get(index);
+					city_master = cityList.get(index).getCityName();
 					queryCounties();
 				} else if (currentLevel == LEVEL_COUNTY) {
 					String countyName = countyList.get(index).getCountyName();
 					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
 					intent.putExtra("city_name", countyName);
+					intent.putExtra("city_master", city_master);
 					startActivity(intent);
 					finish();
 				}
@@ -254,6 +260,10 @@ public class ChooseAreaActivity extends Activity {
 		} else if (currentLevel == LEVEL_CITY) {
 			queryProvinces();
 		} else {
+			if (isFromWeatherActivity) {
+				Intent intent = new Intent(this, WeatherActivity.class);
+				startActivity(intent);
+			}
 			finish();
 		}
 	}

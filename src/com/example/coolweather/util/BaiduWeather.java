@@ -23,16 +23,22 @@ import android.preference.PreferenceManager;
 
 public class BaiduWeather {
 	
-	static String currentCity = "";
+	public static String currentCity = "";
 	
+	public static String MasterCity = "";
 	//获取天气信息
-	public static String GetWeater(Context context, String city) {
+	public static String GetWeater(Context context, String city, String city_master) {
 		currentCity = city;
+		MasterCity = city_master;
 		BaiduWeather wu = new BaiduWeather();
 		String buffstr = null;
 		try {
 			String xml = wu.GetXmlCode(URLEncoder.encode(city, "utf-8")); //设置输入城市的编码,以满足百度天气API需要
 			buffstr = wu.readStringXml(context, xml, city); //调用xml解析函数
+			if (buffstr.equals("No data!")) {
+				xml = wu.GetXmlCode(URLEncoder.encode(city_master, "utf-8")); //设置输入城市的编码,以满足百度天气API需要
+				buffstr = wu.readStringXml(context, xml, city_master); //调用xml解析函数
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,8 +99,10 @@ public class BaiduWeather {
 			Element rootElt = doc.getRootElement(); //获取根节点
 			Iterator<?> iter = rootElt.elementIterator("results"); //获取跟节点下的子节点 results
 			String status = rootElt.elementText("status"); //获取状态，如果等于success，表示有数据
-			if (!status.equals("success")) 
+			if (!status.equals("success")) {
+				saveWeatherInfo(context, currentCity, "", "", "","", "", "No data!","");
 				return "No data!"; //如果不存在数据,直接返回
+			}
 			//String date = rootElt.elementText("date"); //获取根节点下的，当天日期.
 			//buff.append(date + "\n");
 			
@@ -123,7 +131,7 @@ public class BaiduWeather {
 					
 					//buff.append(eledate.getText()+" "+eleweather.getText()); //拼接信息
 					saveWeatherInfo(context, currentCity, eledate.getText(), eleday.getText(), elenightday.getText(),
-							eleweather.getText(), elewind.getText(), eletem.getText());
+							eleweather.getText(), elewind.getText(), eletem.getText(), MasterCity);
 				}			
 			}
 		} catch (DocumentException e) {
@@ -138,7 +146,7 @@ public class BaiduWeather {
 	
 	//将天气信息存储到SharedPreferences文件中
 	public static void saveWeatherInfo(Context context, String cityName, String currentDate, String day_pic, String niday_pic,
-			String weather, String wind, String temp1) {
+			String weather, String wind, String temp1, String master_city) {
 		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 		editor.putBoolean("city_selected", true);
 		editor.putString("city_name", cityName);
@@ -148,6 +156,7 @@ public class BaiduWeather {
 		editor.putString("temp1", temp1);
 		editor.putString("day_pic", day_pic);
 		editor.putString("niday_pic", niday_pic);
+		editor.putString("master_city", master_city);
 		editor.commit();
 	}
 
