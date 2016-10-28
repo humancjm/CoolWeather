@@ -51,13 +51,14 @@ public class AutoUpdateService extends Service {
 	private void updateWeather() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String cityName_1 = prefs.getString("city_name", "");
-		String cityName_2 = prefs.getString("master_city", "");
+		String cityName_2 = prefs.getString("city_master", "");
 
 		if (!cityName_1.equals(""))  {
 			//WeatherActivity a = new WeatherActivity();
 			BaiduWeather.GetWeater(this, cityName_1, cityName_2);
 			//a.refreshWeather.performClick();
 		}
+
 	}
 	
 

@@ -146,7 +146,7 @@ public class BaiduWeather {
 	
 	//将天气信息存储到SharedPreferences文件中
 	public static void saveWeatherInfo(Context context, String cityName, String currentDate, String day_pic, String niday_pic,
-			String weather, String wind, String temp1, String master_city) {
+			String weather, String wind, String temp1, String city_master) {
 		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 		editor.putBoolean("city_selected", true);
 		editor.putString("city_name", cityName);
@@ -156,7 +156,7 @@ public class BaiduWeather {
 		editor.putString("temp1", temp1);
 		editor.putString("day_pic", day_pic);
 		editor.putString("niday_pic", niday_pic);
-		editor.putString("master_city", master_city);
+		editor.putString("city_master", city_master);
 		editor.commit();
 	}
 

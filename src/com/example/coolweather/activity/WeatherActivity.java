@@ -77,15 +77,19 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		refreshWeather = (Button) findViewById(R.id.refresh_weather);
 		String city_name = getIntent().getStringExtra("city_name");
 		String city_master = getIntent().getStringExtra("city_master");
-		
+	
+		if (null != city_name && !"".equals(city_name)) { 
+			SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+			editor.putString("city_name", city_name);
+			editor.putString("city_master", city_master);
+			editor.commit();
+		}
 		switchCity.setOnClickListener(this);
 		
 		refreshWeather.setOnClickListener(this);
 		
-		boolean boolean_a = checkNetworkAvailable(this);
-		
 		//if (!TextUtils.isEmpty(city_name)) {
-		if (boolean_a == true) {
+		if (checkNetworkAvailable(this) == true) {
 		
 			//有县级代号时就去查询天气
 		    publishText.setText("同步中...");
@@ -120,10 +124,12 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
-			Bundle bundle = intent.getExtras();
-			if (bundle.getString("update_state").equals("update")) {
-				showWeather();
-			}
+			if (checkNetworkAvailable(context) == true) {
+				Bundle bundle = intent.getExtras();
+				if (bundle.getString("update_state").equals("update")) {
+					showWeather();
+				}
+			} 
 		}
 		
 		public MyReceiver() {
@@ -143,13 +149,16 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			finish();
 			break;
 		case R.id.refresh_weather:
-			publishText.setText("同步中...");
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			String cityName = prefs.getString("city_name", "");
-			String city_master = prefs.getString("city_master", "");
-			if (!TextUtils.isEmpty(cityName)) {
+			if (checkNetworkAvailable(this) == true) {
+				publishText.setText("同步中...");
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+				String cityName = prefs.getString("city_name", "");
+				String city_master = prefs.getString("city_master", "");
 				BaiduWeather.GetWeater(this, cityName, city_master);
 				showWeather();
+			} else {
+				publishText.setText("网络未连接...");
+				Toast.makeText(this, "网络未连接！", Toast.LENGTH_SHORT).show();
 			}
 			break;
 		default:
